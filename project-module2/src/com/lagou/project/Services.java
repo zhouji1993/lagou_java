@@ -20,21 +20,14 @@ import java.util.EnumMap;
 
 public interface Services  {
     enum CardType {BigCard,SmallCard,MicroCard};
-    String getscard(EnumMap CardType) ;
+    String getscard(CardType CardType) ;
 }
 
-interface TalkServices extends Services{
-    Long TTC = null;
-    String cardType="";
-    @Override
-    String getscard(EnumMap CardType);
+interface TalkServices{
 
-    long countTTC(long TTC,String cardType);
+    public abstract void countTTC(long TTC, SimsCard cardType);
 }
-interface NetFlowServices extends Services{
-    double netFlow = 0;
-    String cardType="";
-    @Override
-    String getscard(EnumMap CardType);
-     void countnetFlow(double netFlow,String cardType);
+interface NetFlowServices {
+
+    public abstract void countnetFlow(double netFlow,SimsCard cardType);
 }

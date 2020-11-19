@@ -22,14 +22,15 @@ import java.util.*;
 public class SimsCard {
 
 //    卡类型、卡号、用户名、密码、账户余额、通话时长(分钟)、上网流量 行为：显示（卡号 + 用户名 + 当前余额）
-    private String CardType;
+     CardType CardType;
     private String PhoneNum;
     private String UserName;
     private String Password;
     private Double balance;
     private Double CCT;
     private Double NetFlow;
-    public SimsCard( String CardType,String PhoneNum,String UserName,String Password,Double balance,Double CCT,Double NetFlow){
+    public SimsCard(){};
+    public SimsCard( CardType CardType,String PhoneNum,String UserName,String Password,Double balance,Double CCT,Double NetFlow){
         setCardType(CardType);
         setPhoneNum(PhoneNum);
         setUserName(UserName);
@@ -40,11 +41,11 @@ public class SimsCard {
 
     }
 
-    public void setCardType(String cardType) {
-        CardType = cardType;
+    public void setCardType(CardType cardType) {
+        this.CardType = cardType;
     }
 
-    public String getCardType() {
+    public CardType getCardType() {
         return CardType;
     }
 

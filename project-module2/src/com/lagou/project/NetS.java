@@ -1,16 +1,22 @@
 package com.lagou.project;
+
+import java.text.MessageFormat;
+
 /*
 * （3）上网套餐类 特征：上网流量、每月资费 行为：显示所有套餐信息
-*
+*       重写
 *
 * */
-public class NetS {
+public class NetS extends AbstractUserTalkNew implements TalkServices  {
     private double netFlow ;
     private double netBill;
+    CardType cardType;
 
+
+    public NetS(){ };
 
     public NetS(double netFlow,double netBill){
-        setNetBill(netBill);
+        super();
         setNetFlow(netFlow);
     }
 
@@ -44,4 +50,18 @@ public class NetS {
     }
 
 
+    @Override
+    public void showBills(double Bill) {
+        System.out.println(MessageFormat.format("Bill{0}", getNetBill()));
+
+    }
+
+
+
+
+
+    @Override
+    public void countTTC(long TTC, SimsCard cardType) {
+
+    }
 }

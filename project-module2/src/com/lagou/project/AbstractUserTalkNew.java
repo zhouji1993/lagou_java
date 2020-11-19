@@ -29,17 +29,18 @@ public abstract class AbstractUserTalkNew{
         return Bill;
     }
     public AbstractUserTalkNew(){
-        setBill(Bill);
     }
     public AbstractUserTalkNew(Double Bill){
         setBill(Bill);
     }
 
-
+    public void show( ) {
+        System.out.println("每月资费:" + Bill);
+    }
     public void show(double Bill) {
         System.out.println("每月资费:" + Bill);
     }
-    public abstract double showBills(double Bill);
+    public abstract void showBills(double Bill);
 
 
 }

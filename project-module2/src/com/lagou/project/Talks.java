@@ -1,25 +1,36 @@
 package com.lagou.project;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-
-
-public class Talks {
+public class Talks extends AbstractUserTalkNew implements TalkServices{
        /* （2）通话套餐类 特征：通话时长、短信条数、每月资费 行为: 显示所有套餐信息
 
         */
-
+    CardType cardType;
     private Long TTC;
     private Long SMSCount;
     private Double Bill;
-public Talks(Long TTC,Long SMSCount,Double Bill){
+
+    public Talks(){};
+public Talks(Long TTC,Long SMSCount,Double Bill ,CardType cardType){
     setBill(Bill);
     setSMSCount(SMSCount);
     setTTC(TTC);
 }
 
+    public void setCardType(CardType cardType) {
+        this.cardType = cardType;
+    }
+
+    public CardType getCardType() {
+        return cardType;
+    }
+
     public Double getBill() {
         return Bill;
+    }
+
+    @Override
+    public void showBills(double Bill) {
+        System.out.println(new StringBuilder().append("Bill:").append(Bill).toString());
     }
 
     public Long getSMSCount() { return SMSCount; }
@@ -53,5 +64,15 @@ public Talks(Long TTC,Long SMSCount,Double Bill){
             strings.append(Bill);
             System.out.println(strings);
     }
+
+
+
+    @Override
+    public void countTTC(long TTC, SimsCard cardType) {
+        System.out.println(new StringBuilder().append("test ").append(TTC).append("kapianleixing").append(getCardType()).toString());
+
+
+}
+
 
 }
