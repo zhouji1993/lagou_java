@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>使用vue实现简单的购物车功能</title>
+    <script src = "https://cdn.jsdelivr.net/npm/vue/dist/vue.js"> </script>
+</head>
+<body>
+<div id="shop-cart">
+    <table border="1" cellspacing="0" cellpadding="0" width="50%" style="margin: 0 ;">
+        <tr>
+            <th>编号</th>
+            <th>书籍名称</th>
+            <th>出版日期</th>
+            <th>单价</th>
+            <th>购买数量</th>
+            <th>价格</th>
+            <th>操作</th>
+        </tr>
+        <tr v-for="(obj,index) of products" v-bind:class="{bg:index%2==0}">
+            <td>{{index+1}}</td>
+            <td>{{obj.name}}</td>
+            <td>{{obj.date}}</td>
+            <td>{{obj.price|currency(5)}}</td>
+            <td>
+                <button v-on:click="obj.count<=1?obj.count=1:obj.count-=1" >-</button>
+                {{obj.count}}
+                <button v-on:click="obj.count+=1">+</button>
+            </td>
+            <td>{{obj.count*obj.price|currency(4)}}</td>
+            <td>
+                <button v-on:click="remove(index)">移除</button>
+            </td>
+        </tr>
+
+    </table>
+    <h1>总价格：{{total|currency(4)}}￥ </h1>
+
+</div>
+<!--v-else-if:click="obj.count=0?0:obj.count=1"-->
+
+<script>
+
+    Vue.filter('currency',function(v,n){
+        if(!v){
+            return ""
+        }
+        return "￥"+v.toFixed(n||2);
+
+    })
+
+
+    let vm= new Vue({//构建一个vue实例
+        el:'#shop-cart',    //指定需要挂载的元素
+        data:{
+            products:[
+                {
+                    _id:10001,
+                    name:'《JAVA变成思想》',
+                    date: '2020-9',
+                    price:11.5,
+                    count:10,
+                },
+                {
+                    _id:10002,
+                    name:'数据分析于数据原理',
+                    date: '2019-2',
+                    price:12.5,
+                    count:5,
+                },
+                {
+                    _id:10003,
+                    name:'hadoop权威指南',
+                    date: '2019-10',
+                    price:6.5,
+                    count:100,
+                },
+                {
+                    _id:10004,
+                    name:'代码大全',
+                    date: '2018-8',
+                    price:6.5,
+                    count:1,
+                },
+            ]
+        },
+        computed:{//计算属性
+            total:function(){//计算总价的方法
+                let sum=0;
+                for(let i=0;i<this.products.length;i++){
+                    sum+=parseFloat(this.products[i].price)*parseFloat(this.products[i].count)
+                }
+                return sum;
+            }
+        },
+        methods:{//方法
+            reduces: function (i) {
+                i = i || 1;//为避免参数为 null 或 undefined 值，这里设定了默认值 1
+                this.count -= i;
+
+            },
+            remove:function(index){//移除的方法
+                if(confirm('你确定要删除吗?')){
+                    this.products.splice(index,1);
+                }
+            }
+        }
+
+    })
+
+</script>
+</body>
+</html>
