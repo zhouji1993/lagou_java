@@ -1,0 +1,25 @@
+create table  dept(
+    dept_id int primary key AUTO_INCREMENT,
+    dept_name varchar(256),
+    major_name varchar(256),
+    telepthon varchar(13),
+    email varchar(256)
+)engine innodb  AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+create table employee(
+    emp_id int primary key AUTO_INCREMENT,
+    emp_name varchar(256) ,
+    dept_id int ,
+    job_name varchar(256),
+    join_date varchar(256),
+    telephone varchar(13)
+)engine innodb AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+alter table dept  add constraint deptfk foreign key(dept_id) references dept(dept_id);
+
+
+insert into dept(dept_id, dept_name, major_name, telepthon, email) VALUES (1 ,"市场部","拉钩招聘","400-400-4008","lagou@163.com"),
+                                                                          (2 ,"销售部","拉钩教育","400-400-4002","laggou@163.com");
+
+insert into employee(emp_id, emp_name, dept_id, job_name, join_date, telephone) VALUES (1 , "小王",1 ,"客户经理","2020-06-06","13212345678"),
+                                                                                       (2 , "老于",1 ,"客户经理","2019-04-27","13512345679"),
+                                                                                       (3 , "老方",2 ,"销售经理","2015-08-14","13512345670");
