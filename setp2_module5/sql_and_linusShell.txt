@@ -1,0 +1,170 @@
+1.使用top查看系统资源占用情况时，哪一列表示内存占用呢？
+答：
+RES  第六列
+
+
+2.如果知道一个文件名称，怎么查这个文件在linux下的哪个目录，如：要查找tnsnames.ora文件
+答：
+tnsnames.ora $ORACLE_HOME/network/admin 
+或
+find / -name nsnames.ora
+
+二、编码题
+
+题目要求:
+
+一个张xxx.sql表的大小为156M, 需要用拆分表的工具将表拆分为1024KB的多个文件,请编写shell脚本执行这些sql文件,完成表的创建和数据的插入。 
+答：定義一個文件，把所有的文件名寫道文件中
+for n in `cat sql`
+do
+mysql -u xxx -p password -h ip -S sockfile -d dbname "source $n"
+done
+ 
+
+
+
+此试卷分上和下两部分，相关说明如下：1）本测试卷以检查大家学习效果为目的，涉及Java、MySQL以及Linux服务器内容，由已学知识点 + 面试题组成。2）选择题有多选也有单选。3）请参加测试的学员本着对自己负责的态度，独立完成测试，不要翻看之前笔记，不要进行资料搜索。）
+
+二、SQL编程题（总分40分）    要求：提交效果截图或演示视频到码云  
+
+1、题目一
+
+有如下三张数据表
+
+学生表：student(studentNo,studentName,age,sex)
+
+课程表：course(courseNo,courseName,tearcher)
+
+学生得分表：student_course(studentNo,courseNo,grade)
+
+编写SQL语句，完成如下需求
+
+1）查询有课程大于80分又有课程低于60分的学生的学号（5分）
+select s.* from student s, student_course c where s.studentNo = c. studentNo and (grade >80 or grade < 60)
+
+2) 查询各门课程去掉一个最高分和最低分后的平均成绩（5分）
+
+select avg(grade),courseNo
+(
+ select Row_number() over(order by grade) as rowID,grade,courseNo
+    from student_course
+）emp
+where rowid >=2
+and rowid <=count(grade) -1
+group by courseNo
+
+
+2、题目二
+
+        表a
+
++----+
+
+| userid |
+
++----+
+
+| 111 |
+
+| 222 |
+
+| 333 |
+
+| 777|
+
++----+
+
+ 
+
+表b
+
++----+
+
+| userid |
+
++----+
+
+| 111 |
+
+| 444|
+
+| 333|
+
++----+
+
+1）编写一段sql，查找a、b表都有的userid（5分）
+select
+*from a,b where a.userid=b.userid
+
+2）编写一段sql，查找a中有b中没有的userid（5分）
+
+select * from a,b where a.userid(+)=b.userid and b.userid is null
+3、题目三
+
+编写一个 SQL 查询，查找 Person 表中所有重复的电子邮箱（10分）。
+
+示例：
+
++----+---------+
+
+| Id | Email   |
+
++----+---------+
+
+| 1  | a@b.com |
+
+| 2  | c@d.com |
+
+| 3  | a@b.com |
+
++----+---------+
+
+根据以上输入，你的查询应返回以下结果：
+
++---------+
+
+| Email   |
+
++---------+
+
+| a@b.com |
+
++---------+
+
+说明：所有电子邮箱都是小写字母。
+select p.email from (
+select p.*,row_number() (partition by email order by id ) as rn from person p)
+where rn >1
+4、题目四
+
+编写一个 SQL 查询，获取 Employee 表中第二高的薪水（Salary）（10分） 。
+
++----+--------+
+
+| Id | Salary |
+
++----+--------+
+
+| 1  | 100    |
+
+| 2  | 200    |
+
+| 3  | 300    |
+
++----+--------+
+
+例如上述 Employee 表，SQL查询应该返回 200 作为第二高的薪水。如果不存在第二高的薪水，那么查询应返回 null。
+
++---------------------+
+
+| SecondHighestSalary |
+
++---------------------+
+
+| 200                 |
+
++---------------------+
+select * from (
+select r.*,rank() over(partition by Salary order by id ) rn from  Employee r)where rn =2
+
+
