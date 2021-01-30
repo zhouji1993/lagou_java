@@ -1,0 +1,48 @@
+第一题
+select team  from (
+select team,year,lag(team ,1 ,'null') over (order by year  ) lagteam ,lead(team ,1 ,'null') over (order by year  )  leadteam from t1) temp
+where team = lagteam and team =leadteam
+
+
+第二题
+
+with temp as(
+select id,time,price,lag(price ,1 ,'null') over (partition by id order by time ) lagprice ,lead(price ,1 ,'null') over (partition by id order by time )  leadprice from t2
+)
+select id ,time, case when price > lagprice and price > leadprice  then "波峰"
+	when price <leadprice  and price < lagprice then "波谷"
+	else 'null' end as "price"
+from temp where price != null
+
+
+第三题
+每个id浏览时长、步长
+时间极差和counts
+
+1.
+
+select id ,
+    date_format(to_date(from_unixtime(UNIX_TIMESTAMP(dt,"yyyy/MM/dd hh:mm"))),"yyyy-MM-dd") daytime,
+    count(*) count,
+    (max(UNIX_TIMESTAMP(dt,"yyyy/MM/dd hh:mm"))-min(UNIX_TIMESTAMP(dt,"yyyy/MM/dd hh:mm")))/60 totalminutes
+from t3 group by id , date_format(to_date(from_unixtime(UNIX_TIMESTAMP(dt,"yyyy/MM/dd hh:mm"))),"yyyy-MM-dd");
+
+2、
+1 对时间进行升序排列，按照id进行分区，并计算当前时间到该分区第一个值之间的间隔timeintervals,用该时间间隔除以30得到第二个分区字段steps
+2 按照id和steps进行分区，并且按id和steps进行分组和排序，用该分区的最大时间戳减去最小时间戳计算得到时长，使用count（*）得到步长
+
+
+with tmp as (
+    select id ,
+        UNIX_TIMESTAMP(dt,"yyyy/MM/dd hh:mm") currentminute,
+        dt,
+        first_value(UNIX_TIMESTAMP(dt,"yyyy/MM/dd hh:mm")) over (partition by id order by(UNIX_TIMESTAMP(dt,"yyyy/MM/dd hh:mm")) ) firstcurrentmintus
+    from t3    
+)
+select id,(max(currentminute)-min(currentminute))/60 timebetween ,count(*) totalcount,steps
+    from (
+        select id,dt,currentminute,
+                (currentminute-firstcurrentmintus)/60 timeintervals,
+                floor((currentminute-firstcurrentmintus)/(60*30)) steps
+        from tmp order by id ,currentminute
+    )tmp1 group by id,steps order by id,steps
