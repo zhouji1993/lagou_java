@@ -1,0 +1,169 @@
+(spark) [root@dend 7006]# ps -ef| grep redis
+root       6522   5178  0 17:48 pts/0    00:00:00 /root/redis-bin/bin/redis-server 127.0.0.1:7001 [cluster]
+root       6934   5178  0 17:48 pts/0    00:00:00 /root/redis-bin/bin/redis-server 127.0.0.1:7002 [cluster]
+root       7261   5178  0 17:49 pts/0    00:00:00 /root/redis-bin/bin/redis-server 127.0.0.1:7003 [cluster]
+root       7407   5178  0 17:49 pts/0    00:00:00 /root/redis-bin/bin/redis-server 127.0.0.1:7004 [cluster]
+root       7556   5178  0 17:49 pts/0    00:00:00 /root/redis-bin/bin/redis-server 127.0.0.1:7005 [cluster]
+root       7671   5178  0 17:49 pts/0    00:00:00 /root/redis-bin/bin/redis-server 127.0.0.1:7006 [cluster]
+root       9786   5178  0 17:51 pts/0    00:00:00 grep --color=auto redis
+(spark) [root@dend 7006]# /root/redis-bin/bin/redis-cli --cluster create 192.168.182.128:7001 192.168.182.128:7002 192.168.182.128:7003 192.168.182.128:7004 192.168.182.128:7005 ^C006 --cluster-replicas 1
+(spark) [root@dend 7006]# cd ..
+(spark) [root@dend conf]# ls
+7001  700{1}  7002  700{2}  7003  700{3}  7004  700{4}  7005  700{5}  7006  700{6}  700{7}
+(spark) [root@dend conf]# rm 700\{*
+rm：是否删除普通文件 "700{1}"？^C
+(spark) [root@dend conf]# rm -rf 700\{*
+(spark) [root@dend conf]# ls
+7001  7002  7003  7004  7005  7006
+(spark) [root@dend conf]# mkdir cluster 
+(spark) [root@dend conf]# cd cluster/
+(spark) [root@dend cluster]# mkdir cluster ^C
+(spark) [root@dend cluster]# ^C
+(spark) [root@dend cluster]# /root/redis-bin/bin/redis-cli --cluster create 127.0.0.1:7001 127.0.0.1:7002 127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005 127.0.0.1:7006 --cluster-replicas 1
+>>> Performing hash slots allocation on 6 nodes...
+Master[0] -> Slots 0 - 5460
+Master[1] -> Slots 5461 - 10922
+Master[2] -> Slots 10923 - 16383
+Adding replica 127.0.0.1:7005 to 127.0.0.1:7001
+Adding replica 127.0.0.1:7006 to 127.0.0.1:7002
+Adding replica 127.0.0.1:7004 to 127.0.0.1:7003
+>>> Trying to optimize slaves allocation for anti-affinity
+[WARNING] Some slaves are in the same host as their master
+M: d7916b242b469a58b5f5f6e96023b25e9cff57e6 127.0.0.1:7001
+   slots:[0-5460] (5461 slots) master
+M: b2da1f02f8b2d470b0eed7fb8e27ebe9695f5e26 127.0.0.1:7002
+   slots:[5461-10922] (5462 slots) master
+M: f07dd581dfd15098c841515fc4102ea49058148e 127.0.0.1:7003
+   slots:[10923-16383] (5461 slots) master
+S: 23dcae9359a26c142f919cde8b541e4fb244f7e2 127.0.0.1:7004
+   replicates f07dd581dfd15098c841515fc4102ea49058148e
+S: 0c834c069d49770503602fac92c85b0fa84ee87a 127.0.0.1:7005
+   replicates d7916b242b469a58b5f5f6e96023b25e9cff57e6
+S: 6062d807c428540ee24dac64c1a6f1b80733414f 127.0.0.1:7006
+   replicates b2da1f02f8b2d470b0eed7fb8e27ebe9695f5e26
+Can I set the above configuration? (type 'yes' to accept): yes
+>>> Nodes configuration updated
+>>> Assign a different config epoch to each node
+>>> Sending CLUSTER MEET messages to join the cluster
+Waiting for the cluster to join
+....
+>>> Performing Cluster Check (using node 127.0.0.1:7001)
+M: d7916b242b469a58b5f5f6e96023b25e9cff57e6 127.0.0.1:7001
+   slots:[0-5460] (5461 slots) master
+   1 additional replica(s)
+S: 0c834c069d49770503602fac92c85b0fa84ee87a 127.0.0.1:7005
+   slots: (0 slots) slave
+   replicates d7916b242b469a58b5f5f6e96023b25e9cff57e6
+S: 6062d807c428540ee24dac64c1a6f1b80733414f 127.0.0.1:7006
+   slots: (0 slots) slave
+   replicates b2da1f02f8b2d470b0eed7fb8e27ebe9695f5e26
+M: b2da1f02f8b2d470b0eed7fb8e27ebe9695f5e26 127.0.0.1:7002
+   slots:[5461-10922] (5462 slots) master
+   1 additional replica(s)
+S: 23dcae9359a26c142f919cde8b541e4fb244f7e2 127.0.0.1:7004
+   slots: (0 slots) slave
+   replicates f07dd581dfd15098c841515fc4102ea49058148e
+M: f07dd581dfd15098c841515fc4102ea49058148e 127.0.0.1:7003
+   slots:[10923-16383] (5461 slots) master
+   1 additional replica(s)
+[OK] All nodes agree about slots configuration.
+>>> Check for open slots...
+>>> Check slots coverage...
+[OK] All 16384 slots covered.
+(spark) [root@dend cluster]# ./redis-cli -h 127.0.0.1 -p 7001 -c
+bash: ./redis-cli: 没有那个文件或目录
+(spark) [root@dend cluster]# /root/redis-bin/bin/redis-cli --cluster create 127.0.0.1:7001 127.0.0.1:7002 127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005 127.0.0.1:7006 --clus^Cr-replicas 1
+(spark) [root@dend cluster]# /root/redis-bin/bin/redis-cli -p 7001 -c -h 127.0.0.1
+127.0.0.1:7001> cluster info
+cluster_state:ok
+cluster_slots_assigned:16384
+cluster_slots_ok:16384
+cluster_slots_pfail:0
+cluster_slots_fail:0
+cluster_known_nodes:6
+cluster_size:3
+cluster_current_epoch:6
+cluster_my_epoch:1
+cluster_stats_messages_ping_sent:75
+cluster_stats_messages_pong_sent:80
+cluster_stats_messages_sent:155
+cluster_stats_messages_ping_received:75
+cluster_stats_messages_pong_received:75
+cluster_stats_messages_meet_received:5
+cluster_stats_messages_received:155
+127.0.0.1:7001> cluster nodes
+0c834c069d49770503602fac92c85b0fa84ee87a 127.0.0.1:7005@17005 slave d7916b242b469a58b5f5f6e96023b25e9cff57e6 0 1613296497391 5 connected
+6062d807c428540ee24dac64c1a6f1b80733414f 127.0.0.1:7006@17006 slave b2da1f02f8b2d470b0eed7fb8e27ebe9695f5e26 0 1613296495377 6 connected
+d7916b242b469a58b5f5f6e96023b25e9cff57e6 127.0.0.1:7001@17001 myself,master - 0 1613296495000 1 connected 0-5460
+b2da1f02f8b2d470b0eed7fb8e27ebe9695f5e26 127.0.0.1:7002@17002 master - 0 1613296498397 2 connected 5461-10922
+23dcae9359a26c142f919cde8b541e4fb244f7e2 127.0.0.1:7004@17004 slave f07dd581dfd15098c841515fc4102ea49058148e 0 1613296495000 4 connected
+f07dd581dfd15098c841515fc4102ea49058148e 127.0.0.1:7003@17003 master - 0 1613296496384 3 connected 10923-16383
+127.0.0.1:7001> 
+
+
+(spark) [root@dend cluster]# /root/redis-bin/bin/redis-cli --cluster add-node 127.0.0.1:7007 127.0.0.1:7001
+>>> Adding node 127.0.0.1:7007 to cluster 127.0.0.1:7001
+>>> Performing Cluster Check (using node 127.0.0.1:7001)
+M: d7916b242b469a58b5f5f6e96023b25e9cff57e6 127.0.0.1:7001
+   slots:[0-5460] (5461 slots) master
+   1 additional replica(s)
+S: 0c834c069d49770503602fac92c85b0fa84ee87a 127.0.0.1:7005
+   slots: (0 slots) slave
+   replicates d7916b242b469a58b5f5f6e96023b25e9cff57e6
+S: 6062d807c428540ee24dac64c1a6f1b80733414f 127.0.0.1:7006
+   slots: (0 slots) slave
+   replicates b2da1f02f8b2d470b0eed7fb8e27ebe9695f5e26
+M: b2da1f02f8b2d470b0eed7fb8e27ebe9695f5e26 127.0.0.1:7002
+   slots:[5461-10922] (5462 slots) master
+   1 additional replica(s)
+S: 23dcae9359a26c142f919cde8b541e4fb244f7e2 127.0.0.1:7004
+   slots: (0 slots) slave
+   replicates f07dd581dfd15098c841515fc4102ea49058148e
+M: f07dd581dfd15098c841515fc4102ea49058148e 127.0.0.1:7003
+   slots:[10923-16383] (5461 slots) master
+   1 additional replica(s)
+[OK] All nodes agree about slots configuration.
+>>> Check for open slots...
+>>> Check slots coverage...
+[OK] All 16384 slots covered.
+>>> Send CLUSTER MEET to node 127.0.0.1:7007 to make it join the cluster.
+[OK] New node added correctly.
+
+
+给7007添加一个slave 7009
+(spark) [root@dend cluster]# /root/redis-bin/bin/redis-cli --cluster add-node 127.0.0.1:7009 127.0.0.1:7007 --cluster-slave --cluster-master-id 86802f1d1f0637fd05f94819d882baca38b0815b
+>>> Adding node 127.0.0.1:7009 to cluster 127.0.0.1:7007
+>>> Performing Cluster Check (using node 127.0.0.1:7007)
+M: 86802f1d1f0637fd05f94819d882baca38b0815b 127.0.0.1:7007
+   slots: (0 slots) master
+S: 0c834c069d49770503602fac92c85b0fa84ee87a 127.0.0.1:7005
+   slots: (0 slots) slave
+   replicates d7916b242b469a58b5f5f6e96023b25e9cff57e6
+S: 6062d807c428540ee24dac64c1a6f1b80733414f 127.0.0.1:7006
+   slots: (0 slots) slave
+   replicates b2da1f02f8b2d470b0eed7fb8e27ebe9695f5e26
+M: f07dd581dfd15098c841515fc4102ea49058148e 127.0.0.1:7003
+   slots:[10923-16383] (5461 slots) master
+   1 additional replica(s)
+M: b2da1f02f8b2d470b0eed7fb8e27ebe9695f5e26 127.0.0.1:7002
+   slots:[5461-10922] (5462 slots) master
+   1 additional replica(s)
+M: d7916b242b469a58b5f5f6e96023b25e9cff57e6 127.0.0.1:7001
+   slots:[0-5460] (5461 slots) master
+   1 additional replica(s)
+S: 23dcae9359a26c142f919cde8b541e4fb244f7e2 127.0.0.1:7004
+   slots: (0 slots) slave
+   replicates f07dd581dfd15098c841515fc4102ea49058148e
+M: 8e4f41bdb1a4ceb6f6ddd7d9ea0ce7857738faa6 127.0.0.1:7008
+   slots: (0 slots) master
+[OK] All nodes agree about slots configuration.
+>>> Check for open slots...
+>>> Check slots coverage...
+[OK] All 16384 slots covered.
+>>> Send CLUSTER MEET to node 127.0.0.1:7009 to make it join the cluster.
+Waiting for the cluster to join
+
+>>> Configure node as replica of 127.0.0.1:7007.
+[OK] New node added correctly.
+(spark) [root@dend cluster]# 
+
